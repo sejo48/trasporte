@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Inscripción para Transporte</title>
+    <!-- Incluyendo Tailwind CSS para un diseño moderno y adaptable -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluyendo la fuente Inter para mejor legibilidad -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Usamos la fuente Inter como predeterminada */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para el botón principal con un degradado y sombra */
+        .btn-whatsapp {
+            background-image: linear-gradient(to right, #25D366, #128C7E);
+        }
+        /* Estilo para el botón de geolocalización */
+        .btn-location {
+            background-color: #f0fdf4; /* Un verde muy claro */
+            color: #166534; /* Un verde oscuro para el texto */
+            border-color: #bbf7d0; /* Un borde verde claro */
+        }
+        .btn-location:hover {
+            background-color: #dcfce7; /* Un poco más oscuro al pasar el ratón */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen py-8">
+
+    <div class="w-full max-w-lg mx-auto p-6 md:p-8 bg-white rounded-2xl shadow-lg">
+
+        <!-- Encabezado del Formulario -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Inscripción de Transporte</h1>
+            <p class="text-gray-600 mt-2">Complete los datos para solicitar el servicio.</p>
+        </div>
+
+        <!-- Formulario -->
+        <form id="formulario-transporte">
+            <div class="space-y-6">
+                <!-- Campo: Nombre del Adulto Mayor -->
+                <div>
+                    <label for="nombre-adulto" class="block text-sm font-medium text-gray-700 mb-1">1. Nombre completo del adulto mayor</label>
+                    <input type="text" id="nombre-adulto" name="nombre-adulto" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Ej: Ana Pérez Rodríguez">
+                </div>
+
+                <!-- Campo: Dirección -->
+                <div>
+                    <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1">2. Dirección exacta de recogida</label>
+                    <textarea id="direccion" name="direccion" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Provincia, cantón, distrito y señas exactas..."></textarea>
+                </div>
+
+                <!-- Campo: Enlace de Google Maps y Botón de Geolocalización -->
+                <div>
+                    <label for="google-maps" class="block text-sm font-medium text-gray-700 mb-1">Ubicación por GPS</label>
+                    <div class="flex flex-col sm:flex-row gap-2 mt-1">
+                         <button type="button" id="btn-obtener-ubicacion" class="w-full sm:w-auto flex-shrink-0 flex items-center justify-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium btn-location transition duration-150 ease-in-out">
+                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
+                            Usar mi ubicación actual
+                        </button>
+                        <input type="url" id="google-maps" name="google-maps" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="O pegue el enlace aquí">
+                    </div>
+                    <p id="location-status" class="text-xs text-gray-500 mt-2"></p>
+                </div>
+
+                <!-- Otros Campos (Teléfonos, etc.) -->
+                <div>
+                    <label for="telefono-principal" class="block text-sm font-medium text-gray-700 mb-1">3. Teléfono de contacto principal</label>
+                    <input type="tel" id="telefono-principal" name="telefono-principal" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Ej: 8888-8888">
+                </div>
+                <div>
+                    <label for="telefono-emergencia" class="block text-sm font-medium text-gray-700 mb-1">4. Teléfono de emergencia</label>
+                    <input type="tel" id="telefono-emergencia" name="telefono-emergencia" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Ej: 6000-0000">
+                </div>
+                <div>
+                    <label for="nombre-autorizado" class="block text-sm font-medium text-gray-700 mb-1">5. Nombre de la persona que lo recibe</label>
+                    <input type="text" id="nombre-autorizado" name="nombre-autorizado" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Familiar, cuidador, etc.">
+                </div>
+            </div>
+
+            <!-- Botón de Envío y Mensaje de Error -->
+            <div class="mt-8">
+                <!-- Elemento para mostrar mensajes de error de validación -->
+                <p id="error-message" class="text-red-600 text-center mb-4 font-medium"></p>
+                <button type="submit" class="w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-md text-base font-medium text-white btn-whatsapp hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                    <svg class="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path clip-rule="evenodd" fill-rule="evenodd" d="M18.403 5.633A8.919 8.919 0 0012.053 3c-4.948 0-8.976 4.027-8.976 8.974 0 1.582.413 3.126 1.198 4.488L3 21l4.628-1.222a8.942 8.942 0 004.425 1.19c4.948 0 8.976-4.027 8.976-8.974a8.926 8.926 0 00-2.628-6.361zM12.053 19.91c-1.428 0-2.82-.363-4.043-1.042l-.29-.17-3.006.79.803-2.943-.187-.304A7.175 7.175 0 014.877 12c0-3.953 3.22-7.174 7.176-7.174a7.14 7.14 0 015.076 2.1l.245.248a7.14 7.14 0 012.1 5.074c-.002 3.953-3.222 7.173-7.178 7.173zm4.238-5.465c-.234-.117-1.38-.682-1.594-.76s-.368-.117-.525.117c-.156.234-.604.76-.74.915-.137.156-.275.176-.51.06s-1.004-.368-1.91-1.18c-.706-.63-1.18-1.408-1.317-1.644s-.015-.368.102-.484c.105-.104.234-.274.35-.412.118-.137.157-.234.235-.39.078-.157.04-.295-.018-.413s-.525-1.26-.72-1.724c-.194-.465-.39-.39-.525-.397h-.475c-.156 0-.412.06-.628.307-.216.246-.833.81-.833 1.975s.852 2.29.97 2.447c.118.156 1.67 2.553 4.046 3.572.57.246 1.017.393 1.367.504.538.17 1.025.148 1.412.09.43-.06 1.38-.563 1.575-1.107.193-.545.193-1.013.136-1.108s-.234-.156-.47-.273z"></path></svg>
+                    Enviar por WhatsApp
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <script>
+        // --- Lógica del Formulario Principal ---
+        const form = document.getElementById('formulario-transporte');
+        form.addEventListener('submit', function(event) {
+            // Prevenir el envío tradicional del formulario
+            event.preventDefault();
+            
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = ''; // Limpiar mensajes de error anteriores
+
+            // Recopilación de todos los datos, quitando espacios en blanco al inicio y final
+            const nombreAdulto = document.getElementById('nombre-adulto').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const googleMaps = document.getElementById('google-maps').value.trim();
+            const telefonoPrincipal = document.getElementById('telefono-principal').value.trim();
+            const telefonoEmergencia = document.getElementById('telefono-emergencia').value.trim();
+            const nombreAutorizado = document.getElementById('nombre-autorizado').value.trim();
+
+            // Validación: Revisar que los campos no estén vacíos
+            if (!nombreAdulto || !direccion || !telefonoPrincipal || !telefonoEmergencia || !nombreAutorizado) {
+                errorMessage.textContent = 'Por favor, complete todos los campos antes de enviar.';
+                return; // Detener la ejecución si falla la validación
+            }
+
+            const numeroWhatsApp = '50660132444';
+            
+            // Construcción del mensaje de WhatsApp
+            let mensaje = `*Formulario de Inscripción - Transporte*\n\n*1. Nombre del adulto mayor:*\n${nombreAdulto}\n\n*2. Dirección de recogida:*\n${direccion}`;
+            if (googleMaps) {
+                mensaje += `\n\n*Ubicación GPS (Google Maps):*\n${googleMaps}`;
+            }
+            mensaje += `\n\n*3. Teléfono principal:*\n${telefonoPrincipal}\n\n*4. Teléfono de emergencia:*\n${telefonoEmergencia}\n\n*5. Persona autorizada para recibir:*\n${nombreAutorizado}`;
+            
+            // Codificar el mensaje para la URL
+            const mensajeCodificado = encodeURIComponent(mensaje.trim());
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
+            
+            // Abrir WhatsApp en una nueva pestaña (más compatible)
+            window.open(urlWhatsApp, '_blank');
+        });
+
+        // --- Lógica del Botón de Geolocalización ---
+        const btnUbicacion = document.getElementById('btn-obtener-ubicacion');
+        const googleMapsInput = document.getElementById('google-maps');
+        const locationStatus = document.getElementById('location-status');
+
+        btnUbicacion.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                locationStatus.textContent = 'Tu navegador no soporta geolocalización.';
+                locationStatus.style.color = 'red';
+                return;
+            }
+
+            locationStatus.textContent = 'Obteniendo ubicación... por favor, espera.';
+            locationStatus.style.color = 'orange';
+
+            const success = (position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                googleMapsInput.value = url;
+                locationStatus.textContent = '¡Ubicación obtenida con éxito!';
+                locationStatus.style.color = 'green';
+            };
+
+            const error = () => {
+                locationStatus.textContent = 'No se pudo obtener la ubicación. Asegúrate de dar permiso en tu navegador.';
+                locationStatus.style.color = 'red';
+            };
+            
+            navigator.geolocation.getCurrentPosition(success, error);
+        });
+
+    </script>
+
+</body>
+</html>
