@@ -3,173 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Inscripción para Transporte</title>
-    <!-- Incluyendo Tailwind CSS para un diseño moderno y adaptable -->
+    <title>Agenda Telefónica - Adulto Mayor</title>
+    
+    <!-- Tailwind CSS para un diseño moderno y adaptable -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Incluyendo la fuente Inter para mejor legibilidad -->
+    
+    <!-- Google Fonts: Inter para mejor legibilidad -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
     <style>
-        /* Usamos la fuente Inter como predeterminada */
         body {
             font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Evita el destello azul al tocar en móviles */
         }
-        /* Estilo para el botón principal con un degradado y sombra */
-        .btn-whatsapp {
-            background-image: linear-gradient(to right, #25D366, #128C7E);
+        /* Animación para la aparición de elementos */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        /* Estilo para el botón de geolocalización */
-        .btn-location {
-            background-color: #f0fdf4; /* Un verde muy claro */
-            color: #166534; /* Un verde oscuro para el texto */
-            border-color: #bbf7d0; /* Un borde verde claro */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
         }
-        .btn-location:hover {
-            background-color: #dcfce7; /* Un poco más oscuro al pasar el ratón */
+        /* Estilo para el placeholder del input */
+        ::placeholder {
+            color: #9ca3af;
+        }
+        /* Estilos para el modal y toast */
+        #modal.active #modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen py-8">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col items-center p-4 sm:p-6">
 
-    <div class="w-full max-w-lg mx-auto p-6 md:p-8 bg-white rounded-2xl shadow-lg">
+    <div class="w-full max-w-2xl mx-auto">
+        <!-- Encabezado de la aplicación -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400">Agenda de Contactos</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Transporte para Adulto Mayor</p>
+            <div id="auth-info" class="text-xs text-gray-500 mt-2">Cargando...</div>
+        </header>
 
-        <!-- Encabezado del Formulario -->
-        <div class="text-center mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Inscripción de Transporte</h1>
-            <p class="text-gray-600 mt-2">Complete los datos para solicitar el servicio.</p>
-        </div>
-
-        <!-- Formulario -->
-        <form id="formulario-transporte">
-            <div class="space-y-6">
-                <!-- Campo: Nombre del Adulto Mayor -->
-                <div>
-                    <label for="nombre-adulto" class="block text-sm font-medium text-gray-700 mb-1">1. Nombre completo del adulto mayor</label>
-                    <input type="text" id="nombre-adulto" name="nombre-adulto" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Ej: Ana Pérez Rodríguez">
-                </div>
-
-                <!-- Campo: Dirección -->
-                <div>
-                    <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1">2. Dirección exacta de recogida</label>
-                    <textarea id="direccion" name="direccion" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Provincia, cantón, distrito y señas exactas..."></textarea>
-                </div>
-
-                <!-- Campo: Enlace de Google Maps y Botón de Geolocalización -->
-                <div>
-                    <label for="google-maps" class="block text-sm font-medium text-gray-700 mb-1">Ubicación por GPS</label>
-                    <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                         <button type="button" id="btn-obtener-ubicacion" class="w-full sm:w-auto flex-shrink-0 flex items-center justify-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium btn-location transition duration-150 ease-in-out">
-                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
-                            Usar mi ubicación actual
-                        </button>
-                        <input type="url" id="google-maps" name="google-maps" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="O pegue el enlace aquí">
+        <!-- Formulario para agregar nuevos contactos -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Añadir Nuevo Contacto</h2>
+            <form id="contact-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Columna 1: Nombres -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="senior-name" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Nombre del Adulto Mayor</label>
+                        <input type="text" id="senior-name" placeholder="Ej: Juan Pérez" required class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
                     </div>
-                    <p id="location-status" class="text-xs text-gray-500 mt-2"></p>
+                    <div>
+                        <label for="family-name" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Nombre del Familiar / Encargado</label>
+                        <input type="text" id="family-name" placeholder="Ej: Ana Gómez" required class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
+                    </div>
                 </div>
-
-                <!-- Otros Campos (Teléfonos, etc.) -->
-                <div>
-                    <label for="telefono-principal" class="block text-sm font-medium text-gray-700 mb-1">3. Teléfono de contacto principal</label>
-                    <input type="tel" id="telefono-principal" name="telefono-principal" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Ej: 8888-8888">
+                <!-- Columna 2: Teléfonos y Botón -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="phone1" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Teléfono 1</label>
+                        <input type="tel" id="phone1" placeholder="8888-8888" required class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
+                    </div>
+                    <div>
+                        <label for="phone2" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Teléfono 2 (Opcional)</label>
+                        <input type="tel" id="phone2" placeholder="Opcional" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Guardar Contacto
+                    </button>
                 </div>
-                <div>
-                    <label for="telefono-emergencia" class="block text-sm font-medium text-gray-700 mb-1">4. Teléfono de emergencia</label>
-                    <input type="tel" id="telefono-emergencia" name="telefono-emergencia" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Ej: 6000-0000">
-                </div>
-                <div>
-                    <label for="nombre-autorizado" class="block text-sm font-medium text-gray-700 mb-1">5. Nombre de la persona que lo recibe</label>
-                    <input type="text" id="nombre-autorizado" name="nombre-autorizado" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150 ease-in-out" placeholder="Familiar, cuidador, etc.">
-                </div>
+            </form>
+        </div>
+        
+        <!-- Contenedor para la lista de contactos -->
+        <div id="contact-list-container">
+             <div class="flex justify-center items-center py-8" id="loader">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p class="ml-4 text-gray-600 dark:text-gray-400">Cargando contactos...</p>
             </div>
-
-            <!-- Botón de Envío y Mensaje de Error -->
-            <div class="mt-8">
-                <!-- Elemento para mostrar mensajes de error de validación -->
-                <p id="error-message" class="text-red-600 text-center mb-4 font-medium"></p>
-                <button type="submit" class="w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-md text-base font-medium text-white btn-whatsapp hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path clip-rule="evenodd" fill-rule="evenodd" d="M18.403 5.633A8.919 8.919 0 0012.053 3c-4.948 0-8.976 4.027-8.976 8.974 0 1.582.413 3.126 1.198 4.488L3 21l4.628-1.222a8.942 8.942 0 004.425 1.19c4.948 0 8.976-4.027 8.976-8.974a8.926 8.926 0 00-2.628-6.361zM12.053 19.91c-1.428 0-2.82-.363-4.043-1.042l-.29-.17-3.006.79.803-2.943-.187-.304A7.175 7.175 0 014.877 12c0-3.953 3.22-7.174 7.176-7.174a7.14 7.14 0 015.076 2.1l.245.248a7.14 7.14 0 012.1 5.074c-.002 3.953-3.222 7.173-7.178 7.173zm4.238-5.465c-.234-.117-1.38-.682-1.594-.76s-.368-.117-.525.117c-.156.234-.604.76-.74.915-.137.156-.275.176-.51.06s-1.004-.368-1.91-1.18c-.706-.63-1.18-1.408-1.317-1.644s-.015-.368.102-.484c.105-.104.234-.274.35-.412.118-.137.157-.234.235-.39.078-.157.04-.295-.018-.413s-.525-1.26-.72-1.724c-.194-.465-.39-.39-.525-.397h-.475c-.156 0-.412.06-.628.307-.216.246-.833.81-.833 1.975s.852 2.29.97 2.447c.118.156 1.67 2.553 4.046 3.572.57.246 1.017.393 1.367.504.538.17 1.025.148 1.412.09.43-.06 1.38-.563 1.575-1.107.193-.545.193-1.013.136-1.108s-.234-.156-.47-.273z"></path></svg>
-                    Enviar por WhatsApp
-                </button>
+        </div>
+        <div id="contact-list" class="space-y-4">
+            <!-- Los contactos se insertarán aquí dinámicamente -->
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmación/Alerta -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 transform transition-all scale-95 opacity-0 duration-300">
+            <h3 id="modal-title" class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4"></h3>
+            <p id="modal-message" class="text-gray-600 dark:text-gray-300 mb-6"></p>
+            <div id="modal-buttons" class="flex justify-end gap-3">
+                <!-- Los botones se insertarán aquí dinámicamente -->
             </div>
-        </form>
-
+        </div>
+    </div>
+    
+    <!-- Notificación Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white py-2 px-5 rounded-lg shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 ease-out z-50">
+        <p id="toast-message"></p>
     </div>
 
-    <script>
-        // --- Lógica del Formulario Principal ---
-        const form = document.getElementById('formulario-transporte');
-        form.addEventListener('submit', function(event) {
-            // Prevenir el envío tradicional del formulario
-            event.preventDefault();
+    <!-- Módulo de Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIGURACIÓN DE FIREBASE ---
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let userId = null;
+
+        // --- ELEMENTOS DEL DOM ---
+        const contactForm = document.getElementById('contact-form');
+        const contactList = document.getElementById('contact-list');
+        const loader = document.getElementById('loader');
+        const authInfo = document.getElementById('auth-info');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalButtons = document.getElementById('modal-buttons');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        // --- SISTEMA DE NOTIFICACIONES (MODAL Y TOAST) ---
+
+        /**
+         * Muestra una notificación "toast" que desaparece automáticamente.
+         * @param {string} message - El mensaje a mostrar.
+         * @param {boolean} isError - Si es true, muestra el toast en color rojo.
+         */
+        function showToast(message, isError = false) {
+            toastMessage.textContent = message;
+            toast.className = `fixed bottom-5 right-5 text-white py-2 px-5 rounded-lg shadow-xl transform transition-all duration-300 ease-out z-50 ${isError ? 'bg-red-600' : 'bg-green-600'} show`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Muestra un modal de confirmación o alerta.
+         * @param {string} title - El título del modal.
+         * @param {string} message - El mensaje del modal.
+         * @param {Array} buttons - Un array de objetos para los botones. Ej: [{text: 'OK', class: 'bg-blue-500', callback: () => {}}]
+         */
+        function showModal(title, message, buttons) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalButtons.innerHTML = ''; // Limpiar botones anteriores
+
+            buttons.forEach(btnInfo => {
+                const button = document.createElement('button');
+                button.textContent = btnInfo.text;
+                button.className = `font-bold py-2 px-4 rounded-lg transition-opacity hover:opacity-80 ${btnInfo.class}`;
+                button.onclick = () => {
+                    if (btnInfo.callback) btnInfo.callback();
+                    hideModal();
+                };
+                modalButtons.appendChild(button);
+            });
             
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = ''; // Limpiar mensajes de error anteriores
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.classList.add('active');
+        }
 
-            // Recopilación de todos los datos, quitando espacios en blanco al inicio y final
-            const nombreAdulto = document.getElementById('nombre-adulto').value.trim();
-            const direccion = document.getElementById('direccion').value.trim();
-            const googleMaps = document.getElementById('google-maps').value.trim();
-            const telefonoPrincipal = document.getElementById('telefono-principal').value.trim();
-            const telefonoEmergencia = document.getElementById('telefono-emergencia').value.trim();
-            const nombreAutorizado = document.getElementById('nombre-autorizado').value.trim();
+        /** Oculta el modal. */
+        function hideModal() {
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modal.classList.remove('active');
+        }
 
-            // Validación: Revisar que los campos no estén vacíos
-            if (!nombreAdulto || !direccion || !telefonoPrincipal || !telefonoEmergencia || !nombreAutorizado) {
-                errorMessage.textContent = 'Por favor, complete todos los campos antes de enviar.';
-                return; // Detener la ejecución si falla la validación
+        // --- AUTENTICACIÓN ---
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                userId = user.uid;
+                authInfo.textContent = `Sesión iniciada. ID: ${userId}`;
+                setupContactListener();
+            } else {
+                userId = null;
+                authInfo.textContent = 'Iniciando sesión anónima...';
             }
-
-            const numeroWhatsApp = '50660132444';
-            
-            // Construcción del mensaje de WhatsApp
-            let mensaje = `*Formulario de Inscripción - Transporte*\n\n*1. Nombre del adulto mayor:*\n${nombreAdulto}\n\n*2. Dirección de recogida:*\n${direccion}`;
-            if (googleMaps) {
-                mensaje += `\n\n*Ubicación GPS (Google Maps):*\n${googleMaps}`;
-            }
-            mensaje += `\n\n*3. Teléfono principal:*\n${telefonoPrincipal}\n\n*4. Teléfono de emergencia:*\n${telefonoEmergencia}\n\n*5. Persona autorizada para recibir:*\n${nombreAutorizado}`;
-            
-            // Codificar el mensaje para la URL
-            const mensajeCodificado = encodeURIComponent(mensaje.trim());
-            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
-            
-            // Abrir WhatsApp en una nueva pestaña (más compatible)
-            window.open(urlWhatsApp, '_blank');
         });
 
-        // --- Lógica del Botón de Geolocalización ---
-        const btnUbicacion = document.getElementById('btn-obtener-ubicacion');
-        const googleMapsInput = document.getElementById('google-maps');
-        const locationStatus = document.getElementById('location-status');
+        async function authenticateUser() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Error de autenticación:", error);
+                authInfo.textContent = 'Error al iniciar sesión.';
+                showModal('Error de Autenticación', 'No se pudo iniciar sesión. Por favor, recarga la página.');
+            }
+        }
+        
+        // --- LÓGICA DE FIRESTORE ---
+        function setupContactListener() {
+            if (!userId) return;
+            const contactsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
+            const q = query(contactsCollectionRef);
 
-        btnUbicacion.addEventListener('click', () => {
-            if (!navigator.geolocation) {
-                locationStatus.textContent = 'Tu navegador no soporta geolocalización.';
-                locationStatus.style.color = 'red';
+            onSnapshot(q, snapshot => {
+                loader.style.display = 'none';
+                const contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderContacts(contacts);
+            }, error => {
+                console.error("Error al obtener contactos:", error);
+                loader.innerHTML = '<p class="text-red-500">Error al cargar los contactos.</p>';
+            });
+        }
+        
+        contactForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!userId) {
+                showModal('Error', 'Debes tener una sesión activa para guardar contactos. Por favor, recarga la página.', [{ text: 'Aceptar', class: 'bg-blue-600 text-white' }]);
                 return;
             }
 
-            locationStatus.textContent = 'Obteniendo ubicación... por favor, espera.';
-            locationStatus.style.color = 'orange';
+            const seniorName = document.getElementById('senior-name').value.trim();
+            const familyName = document.getElementById('family-name').value.trim();
+            const phone1 = document.getElementById('phone1').value.trim();
+            const phone2 = document.getElementById('phone2').value.trim();
 
-            const success = (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                googleMapsInput.value = url;
-                locationStatus.textContent = '¡Ubicación obtenida con éxito!';
-                locationStatus.style.color = 'green';
-            };
-
-            const error = () => {
-                locationStatus.textContent = 'No se pudo obtener la ubicación. Asegúrate de dar permiso en tu navegador.';
-                locationStatus.style.color = 'red';
-            };
-            
-            navigator.geolocation.getCurrentPosition(success, error);
+            try {
+                const contactsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
+                await addDoc(contactsCollectionRef, { seniorName, familyName, phone1, phone2, createdAt: new Date() });
+                showToast('Contacto guardado con éxito.');
+                contactForm.reset();
+            } catch (error) {
+                console.error("Error al guardar el contacto: ", error);
+                showModal('Error', 'Hubo un problema al guardar el contacto. Inténtalo de nuevo.', [{ text: 'Aceptar', class: 'bg-blue-600 text-white' }]);
+            }
         });
 
-    </script>
+        contactList.addEventListener('click', async e => {
+            const deleteButton = e.target.closest('.delete-btn');
+            if (deleteButton) {
+                const contactId = deleteButton.dataset.id;
+                
+                showModal('Confirmar Eliminación', '¿Estás seguro de que quieres eliminar este contacto? Esta acción no se puede deshacer.', [
+                    {
+                        text: 'Cancelar',
+                        class: 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
+                    },
+                    {
+                        text: 'Eliminar',
+                        class: 'bg-red-600 text-white',
+                        callback: async () => {
+                            try {
+                                const contactDocRef = doc(db, 'artifacts', appId, 'users', userId, 'contacts', contactId);
+                                await deleteDoc(contactDocRef);
+                                showToast('Contacto eliminado.');
+                            } catch (error) {
+                                console.error("Error al eliminar el contacto: ", error);
+                                showToast('Error al eliminar el contacto.', true);
+                            }
+                        }
+                    }
+                ]);
+            }
+        });
 
+        // --- RENDERIZADO DE LA UI ---
+        function renderContacts(contacts) {
+            contactList.innerHTML = '';
+            if (contacts.length === 0) {
+                 contactList.innerHTML = `<div class="text-center py-8 px-4 bg-white dark:bg-gray-800 rounded-lg shadow"><p class="text-gray-500 dark:text-gray-400">No hay contactos guardados.</p><p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Usa el formulario de arriba para añadir el primero.</p></div>`;
+                return;
+            }
+            contacts.sort((a, b) => (a.seniorName || '').localeCompare(b.seniorName || ''));
+            contacts.forEach(contact => {
+                const contactElement = document.createElement('div');
+                contactElement.className = 'bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 fade-in';
+                contactElement.dataset.id = contact.id;
+                contactElement.innerHTML = `
+                    <div class="flex-grow">
+                        <div class="mb-3"><p class="text-sm text-gray-500 dark:text-gray-400">Adulto Mayor</p><p class="font-semibold text-lg text-blue-600 dark:text-blue-400">${contact.seniorName}</p></div>
+                        <div class="mb-3"><p class="text-sm text-gray-500 dark:text-gray-400">Familiar / Encargado</p><p class="font-medium text-gray-700 dark:text-gray-300">${contact.familyName}</p></div>
+                        <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                            <a href="tel:${contact.phone1}" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.28 1.465l-2.135 2.135a1.824 1.824 0 0 0 2.65 2.65l2.135-2.135a1.464 1.464 0 0 1 1.466.28l2.295 1.78a1.745 1.745 0 0 1 .163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/></svg>${contact.phone1}</a>
+                            ${contact.phone2 ? `<a href="tel:${contact.phone2}" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.28 1.465l-2.135 2.135a1.824 1.824 0 0 0 2.65 2.65l2.135-2.135a1.464 1.464 0 0 1 1.466.28l2.295 1.78a1.745 1.745 0 0 1 .163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/></svg>${contact.phone2}</a>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 self-start sm:self-center">
+                         <button data-id="${contact.id}" class="delete-btn p-2 rounded-full text-gray-400 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-500 dark:hover:text-red-400 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m3.5.013l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m3.5-.013l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Z"/></svg>
+                            <span class="sr-only">Eliminar</span>
+                        </button>
+                    </div>`;
+                contactList.appendChild(contactElement);
+            });
+        }
+        
+        // --- INICIALIZACIÓN ---
+        authenticateUser();
+    </script>
 </body>
 </html>
