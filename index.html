@@ -236,7 +236,8 @@
       
       // Obtiene el monto de la celda (segunda celda, índice 1)
       const montoCelda = fila.cells[1];
-      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(',', '')); // Limpia el formato de moneda para obtener el número
+      // Limpia el formato de moneda para obtener el número
+      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
       
       const check = fila.querySelector("input[type='checkbox']");
 
@@ -260,7 +261,8 @@
     filas.forEach(fila => {
       // Obtiene el monto de la celda (segunda celda, índice 1)
       const montoCelda = fila.cells[1];
-      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(',', ''));
+      // Limpia el formato de moneda para obtener el número
+      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
       
       // Verifica si el monto es un número válido antes de sumar
       if (!isNaN(monto)) {
