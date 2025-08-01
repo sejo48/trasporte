@@ -132,83 +132,83 @@
   <tbody id="tabla">
     <tr>
         <td contenteditable="true">Elvira</td>
-        <td contenteditable="true" data-monto="30000">30,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="30000">30,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Rocío</td>
-        <td contenteditable="true" data-monto="50000">50,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="50000">50,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Marielos</td>
-        <td contenteditable="true" data-monto="30000">30,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="30000">30,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Gudelia</td>
-        <td contenteditable="true" data-monto="35000">35,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="35000">35,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Bertilia</td>
-        <td contenteditable="true" data-monto="30000">30,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="30000">30,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Elizabeth</td>
-        <td contenteditable="true" data-monto="40000">40,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="40000">40,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Josefa</td>
-        <td contenteditable="true" data-monto="35000">35,000.00</td>
+        <td contenteditable="true" data-monto="35000">35,000</td>
         <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Carmen</td>
-        <td contenteditable="true" data-monto="35000">35,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="35000">35,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Margarita</td>
-        <td contenteditable="true" data-monto="40000">40,000.00</td>
-        <td><input type="checkbox" checked></td></tr>
+        <td contenteditable="true" data-monto="40000">40,000</td>
+        <td><input type="checkbox"></td></tr>
     <tr>
         <td contenteditable="true">Nannys</td>
-        <td contenteditable="true" data-monto="10000">10,000.00</td>
+        <td contenteditable="true" data-monto="10000">10,000</td>
         <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Carmencita</td>
-        <td contenteditable="true" data-monto="30000">30,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="30000">30,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Don Amibal</td>
-        <td contenteditable="true" data-monto="50000">50,000.00</td>
+        <td contenteditable="true" data-monto="50000">50,000</td>
         <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Norman</td>
-        <td contenteditable="true" data-monto="45000">45,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="45000">45,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Fanny</td>
-        <td contenteditable="true" data-monto="45000">45,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="45000">45,000</td>
+        <td><input type="checkbox"></td>
     </tr>
     <tr>
         <td contenteditable="true">Doña Mari</td>
-        <td contenteditable="true" data-monto="45000">45,000.00</td>
-        <td><input type="checkbox" checked></td>
+        <td contenteditable="true" data-monto="45000">45,000</td>
+        <td><input type="checkbox"></td>
     </tr>
   </tbody>
   <tfoot>
     <tr>
       <td colspan="2">Total Seleccionado</td>
-      <td id="totalSeleccionado">415,000.00</td>
+      <td id="totalSeleccionado">415,000</td>
       <td></td>
     </tr>
     <tr>
@@ -259,7 +259,7 @@
     filas.forEach(fila => {
       const montoCelda = fila.cells[1];
       // Limpia el formato de moneda para obtener el número de forma correcta
-      let monto = parseFloat(montoCelda.textContent.replace(/,/g, ''));
+      let monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', ''));
       
       // Valida si el monto es un número y tiene un máximo de 5 dígitos
       if (!isNaN(monto)) {
@@ -268,7 +268,7 @@
           monto = 99999;
         }
         
-        montoCelda.textContent = monto.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+        montoCelda.textContent = monto.toLocaleString('es-CR', { minimumFractionDigits: 0 }); // Sin centavos
         totalGeneral += monto;
         
         const check = fila.querySelector("input[type='checkbox']");
@@ -280,13 +280,13 @@
         }
       } else {
         // Si no es un número, se pone en 0 y se formatea
-        montoCelda.textContent = (0).toLocaleString('es-CR', { minimumFractionDigits: 2 });
+        montoCelda.textContent = (0).toLocaleString('es-CR', { minimumFractionDigits: 0 });
       }
     });
 
-    document.getElementById("totalSeleccionado").textContent = totalSeleccionado.toLocaleString('es-CR', { minimumFractionDigits: 2 });
-    document.getElementById("totalGeneral").textContent = totalGeneral.toLocaleString('es-CR', { minimumFractionDigits: 2 });
-    document.getElementById("totalPendiente").textContent = totalPendiente.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+    document.getElementById("totalSeleccionado").textContent = totalSeleccionado.toLocaleString('es-CR', { minimumFractionDigits: 0 });
+    document.getElementById("totalGeneral").textContent = totalGeneral.toLocaleString('es-CR', { minimumFractionDigits: 0 });
+    document.getElementById("totalPendiente").textContent = totalPendiente.toLocaleString('es-CR', { minimumFractionDigits: 0 });
 
     guardarEstado();
   }
@@ -301,7 +301,7 @@
       filas.forEach((fila, index) => {
         if (estado[index]) {
           fila.cells[0].textContent = estado[index].nombre;
-          fila.cells[1].textContent = estado[index].monto.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+          fila.cells[1].textContent = estado[index].monto.toLocaleString('es-CR', { minimumFractionDigits: 0 });
           const check = fila.querySelector("input[type='checkbox']");
           check.checked = estado[index].checked;
         }
