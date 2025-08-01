@@ -1,317 +1,279 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Telefónica - Adulto Mayor</title>
-    
-    <!-- Tailwind CSS para un diseño moderno y adaptable -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter para mejor legibilidad -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Estilos personalizados -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent; /* Evita el destello azul al tocar en móviles */
-        }
-        /* Animación para la aparición de elementos */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-        /* Estilo para el placeholder del input */
-        ::placeholder {
-            color: #9ca3af;
-        }
-        /* Estilos para el modal y toast */
-        #modal.active #modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        #toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla Interactiva Profesional</title>
+  <style>
+    /* Aplicar box-sizing a todos los elementos para un control de diseño más predecible */
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Estilos generales */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+      padding: 20px;
+      font-size: 1.1em;
+    }
+
+    h2 {
+      color: #98d0c5;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.2em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 1.1em;
+    }
+
+    th {
+      background-color: #98d0c5;
+      color: #1a1a1a;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 1.2em;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #2a2a2a;
+    }
+
+    tbody tr:hover {
+      background-color: #3a3a3a;
+    }
+
+    tfoot td {
+      background-color: #55aa44;
+      font-weight: bold;
+      color: #1a1a1a;
+      padding: 18px;
+      font-size: 1.3em;
+    }
+
+    tfoot tr:last-child td {
+        background-color: #cc4444;
+        color: #e0e0e0;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: #98d0c5;
+    }
+
+    /* Estilos responsivos para que se vea como una tabla clásica en todas las pantallas */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      h2 {
+        font-size: 1.8em;
+      }
+
+      table {
+        margin-top: 15px;
+      }
+
+      th, td {
+        padding: 10px 12px;
+        font-size: 1em;
+      }
+
+      tfoot td {
+        padding: 12px;
+        font-size: 1.1em;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col items-center p-4 sm:p-6">
+<body>
 
-    <div class="w-full max-w-2xl mx-auto">
-        <!-- Encabezado de la aplicación -->
-        <header class="text-center mb-6">
-            <h1 class="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400">Agenda de Contactos</h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-2">Transporte para Adulto Mayor</p>
-            <div id="auth-info" class="text-xs text-gray-500 mt-2">Cargando...</div>
-        </header>
+<h2>Lista de Personas y Montos</h2>
 
-        <!-- Formulario para agregar nuevos contactos -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Añadir Nuevo Contacto</h2>
-            <form id="contact-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Columna 1: Nombres -->
-                <div class="space-y-4">
-                    <div>
-                        <label for="senior-name" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Nombre del Adulto Mayor</label>
-                        <input type="text" id="senior-name" placeholder="Ej: Juan Pérez" required class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
-                    </div>
-                    <div>
-                        <label for="family-name" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Nombre del Familiar / Encargado</label>
-                        <input type="text" id="family-name" placeholder="Ej: Ana Gómez" required class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
-                    </div>
-                </div>
-                <!-- Columna 2: Teléfonos y Botón -->
-                <div class="space-y-4">
-                    <div>
-                        <label for="phone1" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Teléfono 1</label>
-                        <input type="tel" id="phone1" placeholder="8888-8888" required class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
-                    </div>
-                    <div>
-                        <label for="phone2" class="block text-sm font-medium text-gray-600 dark:text-gray-400">Teléfono 2 (Opcional)</label>
-                        <input type="tel" id="phone2" placeholder="Opcional" class="mt-1 block w-full bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
-                        Guardar Contacto
-                    </button>
-                </div>
-            </form>
-        </div>
-        
-        <!-- Contenedor para la lista de contactos -->
-        <div id="contact-list-container">
-             <div class="flex justify-center items-center py-8" id="loader">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p class="ml-4 text-gray-600 dark:text-gray-400">Cargando contactos...</p>
-            </div>
-        </div>
-        <div id="contact-list" class="space-y-4">
-            <!-- Los contactos se insertarán aquí dinámicamente -->
-        </div>
-    </div>
-    
-    <!-- Modal de Confirmación/Alerta -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
-        <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 transform transition-all scale-95 opacity-0 duration-300">
-            <h3 id="modal-title" class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4"></h3>
-            <p id="modal-message" class="text-gray-600 dark:text-gray-300 mb-6"></p>
-            <div id="modal-buttons" class="flex justify-end gap-3">
-                <!-- Los botones se insertarán aquí dinámicamente -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Notificación Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-green-600 text-white py-2 px-5 rounded-lg shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 ease-out z-50">
-        <p id="toast-message"></p>
-    </div>
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Monto</th>
+      <th>✔</th>
+    </tr>
+  </thead>
+  <tbody id="tabla">
+    <tr>
+        <td>Elvira</td>
+        <td data-monto="30000">30,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Rocío</td>
+        <td data-monto="50000">50,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Marielos</td>
+        <td data-monto="30000">30,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Gudelia</td>
+        <td data-monto="35000">35,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Bertilia</td>
+        <td data-monto="30000">30,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Elizabeth</td>
+        <td data-monto="40000">40,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Josefa</td>
+        <td data-monto="35000">35,000.00</td>
+        <td><input type="checkbox"></td>
+    </tr>
+    <tr>
+        <td>Carmen</td>
+        <td data-monto="35000">35,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Margarita</td>
+        <td data-monto="40000">40,000.00</td>
+        <td><input type="checkbox" checked></td></tr>
+    <tr>
+        <td>Nannys</td>
+        <td data-monto="10000">10,000.00</td>
+        <td><input type="checkbox"></td>
+    </tr>
+    <tr>
+        <td>Carmencita</td>
+        <td data-monto="30000">30,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Don Amibal</td>
+        <td data-monto="50000">50,000.00</td>
+        <td><input type="checkbox"></td>
+    </tr>
+    <tr>
+        <td>Norman</td>
+        <td data-monto="45000">45,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Fanny</td>
+        <td data-monto="45000">45,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+    <tr>
+        <td>Doña Mari</td>
+        <td data-monto="45000">45,000.00</td>
+        <td><input type="checkbox" checked></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2">Total Seleccionado</td>
+      <td id="totalSeleccionado">415,000.00</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="2">Total General</td>
+      <td id="totalGeneral"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="2">Total Pendiente</td>
+      <td id="totalPendiente"></td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
 
-    <!-- Módulo de Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<script>
+  // Función para actualizar los totales de los montos
+  function actualizarTotales() {
+    const filas = document.querySelectorAll("#tabla tr");
+    let totalSeleccionado = 0;
+    let totalGeneral = 0;
+    let totalPendiente = 0;
+    const estadosCheckbox = []; // Array para guardar el estado de cada checkbox
 
-        // --- CONFIGURACIÓN DE FIREBASE ---
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        let userId = null;
+    filas.forEach(fila => {
+      const monto = parseFloat(fila.cells[1].dataset.monto);
+      totalGeneral += monto;
 
-        // --- ELEMENTOS DEL DOM ---
-        const contactForm = document.getElementById('contact-form');
-        const contactList = document.getElementById('contact-list');
-        const loader = document.getElementById('loader');
-        const authInfo = document.getElementById('auth-info');
-        const modal = document.getElementById('modal');
-        const modalContent = document.getElementById('modal-content');
-        const modalTitle = document.getElementById('modal-title');
-        const modalMessage = document.getElementById('modal-message');
-        const modalButtons = document.getElementById('modal-buttons');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
+      const check = fila.querySelector("input[type='checkbox']");
 
-        // --- SISTEMA DE NOTIFICACIONES (MODAL Y TOAST) ---
+      if (check.checked) {
+        totalSeleccionado += monto;
+      } else {
+        totalPendiente += monto;
+      }
 
-        /**
-         * Muestra una notificación "toast" que desaparece automáticamente.
-         * @param {string} message - El mensaje a mostrar.
-         * @param {boolean} isError - Si es true, muestra el toast en color rojo.
-         */
-        function showToast(message, isError = false) {
-            toastMessage.textContent = message;
-            toast.className = `fixed bottom-5 right-5 text-white py-2 px-5 rounded-lg shadow-xl transform transition-all duration-300 ease-out z-50 ${isError ? 'bg-red-600' : 'bg-green-600'} show`;
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+      estadosCheckbox.push(check.checked); // Guarda el estado del checkbox
+    });
+
+    document.getElementById("totalSeleccionado").textContent = totalSeleccionado.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+    document.getElementById("totalGeneral").textContent = totalGeneral.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+    document.getElementById("totalPendiente").textContent = totalPendiente.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+
+    // Guarda el estado de los checkboxes en el localStorage
+    localStorage.setItem('checkboxEstados', JSON.stringify(estadosCheckbox));
+  }
+
+  // Función para cargar el estado de los checkboxes del localStorage
+  function cargarEstados() {
+    const estadosGuardados = localStorage.getItem('checkboxEstados');
+    if (estadosGuardados) {
+      const estados = JSON.parse(estadosGuardados);
+      const checkboxes = document.querySelectorAll("#tabla input[type='checkbox']");
+      checkboxes.forEach((cb, index) => {
+        if (estados[index] !== undefined) {
+          cb.checked = estados[index];
         }
+      });
+    }
+  }
 
-        /**
-         * Muestra un modal de confirmación o alerta.
-         * @param {string} title - El título del modal.
-         * @param {string} message - El mensaje del modal.
-         * @param {Array} buttons - Un array de objetos para los botones. Ej: [{text: 'OK', class: 'bg-blue-500', callback: () => {}}]
-         */
-        function showModal(title, message, buttons) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            modalButtons.innerHTML = ''; // Limpiar botones anteriores
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarEstados(); // Carga el estado al abrir la página
+    actualizarTotales(); // Llama a la función para inicializar los totales
+  });
 
-            buttons.forEach(btnInfo => {
-                const button = document.createElement('button');
-                button.textContent = btnInfo.text;
-                button.className = `font-bold py-2 px-4 rounded-lg transition-opacity hover:opacity-80 ${btnInfo.class}`;
-                button.onclick = () => {
-                    if (btnInfo.callback) btnInfo.callback();
-                    hideModal();
-                };
-                modalButtons.appendChild(button);
-            });
-            
-            modal.classList.remove('pointer-events-none', 'opacity-0');
-            modal.classList.add('active');
-        }
+  document.querySelectorAll("#tabla input[type='checkbox']").forEach(cb => {
+    cb.addEventListener("change", actualizarTotales);
+  });
+</script>
 
-        /** Oculta el modal. */
-        function hideModal() {
-            modal.classList.add('pointer-events-none', 'opacity-0');
-            modal.classList.remove('active');
-        }
-
-        // --- AUTENTICACIÓN ---
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                userId = user.uid;
-                authInfo.textContent = `Sesión iniciada. ID: ${userId}`;
-                setupContactListener();
-            } else {
-                userId = null;
-                authInfo.textContent = 'Iniciando sesión anónima...';
-            }
-        });
-
-        async function authenticateUser() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Error de autenticación:", error);
-                authInfo.textContent = 'Error al iniciar sesión.';
-                showModal('Error de Autenticación', 'No se pudo iniciar sesión. Por favor, recarga la página.');
-            }
-        }
-        
-        // --- LÓGICA DE FIRESTORE ---
-        function setupContactListener() {
-            if (!userId) return;
-            const contactsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
-            const q = query(contactsCollectionRef);
-
-            onSnapshot(q, snapshot => {
-                loader.style.display = 'none';
-                const contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderContacts(contacts);
-            }, error => {
-                console.error("Error al obtener contactos:", error);
-                loader.innerHTML = '<p class="text-red-500">Error al cargar los contactos.</p>';
-            });
-        }
-        
-        contactForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            if (!userId) {
-                showModal('Error', 'Debes tener una sesión activa para guardar contactos. Por favor, recarga la página.', [{ text: 'Aceptar', class: 'bg-blue-600 text-white' }]);
-                return;
-            }
-
-            const seniorName = document.getElementById('senior-name').value.trim();
-            const familyName = document.getElementById('family-name').value.trim();
-            const phone1 = document.getElementById('phone1').value.trim();
-            const phone2 = document.getElementById('phone2').value.trim();
-
-            try {
-                const contactsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'contacts');
-                await addDoc(contactsCollectionRef, { seniorName, familyName, phone1, phone2, createdAt: new Date() });
-                showToast('Contacto guardado con éxito.');
-                contactForm.reset();
-            } catch (error) {
-                console.error("Error al guardar el contacto: ", error);
-                showModal('Error', 'Hubo un problema al guardar el contacto. Inténtalo de nuevo.', [{ text: 'Aceptar', class: 'bg-blue-600 text-white' }]);
-            }
-        });
-
-        contactList.addEventListener('click', async e => {
-            const deleteButton = e.target.closest('.delete-btn');
-            if (deleteButton) {
-                const contactId = deleteButton.dataset.id;
-                
-                showModal('Confirmar Eliminación', '¿Estás seguro de que quieres eliminar este contacto? Esta acción no se puede deshacer.', [
-                    {
-                        text: 'Cancelar',
-                        class: 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
-                    },
-                    {
-                        text: 'Eliminar',
-                        class: 'bg-red-600 text-white',
-                        callback: async () => {
-                            try {
-                                const contactDocRef = doc(db, 'artifacts', appId, 'users', userId, 'contacts', contactId);
-                                await deleteDoc(contactDocRef);
-                                showToast('Contacto eliminado.');
-                            } catch (error) {
-                                console.error("Error al eliminar el contacto: ", error);
-                                showToast('Error al eliminar el contacto.', true);
-                            }
-                        }
-                    }
-                ]);
-            }
-        });
-
-        // --- RENDERIZADO DE LA UI ---
-        function renderContacts(contacts) {
-            contactList.innerHTML = '';
-            if (contacts.length === 0) {
-                 contactList.innerHTML = `<div class="text-center py-8 px-4 bg-white dark:bg-gray-800 rounded-lg shadow"><p class="text-gray-500 dark:text-gray-400">No hay contactos guardados.</p><p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Usa el formulario de arriba para añadir el primero.</p></div>`;
-                return;
-            }
-            contacts.sort((a, b) => (a.seniorName || '').localeCompare(b.seniorName || ''));
-            contacts.forEach(contact => {
-                const contactElement = document.createElement('div');
-                contactElement.className = 'bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 fade-in';
-                contactElement.dataset.id = contact.id;
-                contactElement.innerHTML = `
-                    <div class="flex-grow">
-                        <div class="mb-3"><p class="text-sm text-gray-500 dark:text-gray-400">Adulto Mayor</p><p class="font-semibold text-lg text-blue-600 dark:text-blue-400">${contact.seniorName}</p></div>
-                        <div class="mb-3"><p class="text-sm text-gray-500 dark:text-gray-400">Familiar / Encargado</p><p class="font-medium text-gray-700 dark:text-gray-300">${contact.familyName}</p></div>
-                        <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                            <a href="tel:${contact.phone1}" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.28 1.465l-2.135 2.135a1.824 1.824 0 0 0 2.65 2.65l2.135-2.135a1.464 1.464 0 0 1 1.466.28l2.295 1.78a1.745 1.745 0 0 1 .163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/></svg>${contact.phone1}</a>
-                            ${contact.phone2 ? `<a href="tel:${contact.phone2}" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.28 1.465l-2.135 2.135a1.824 1.824 0 0 0 2.65 2.65l2.135-2.135a1.464 1.464 0 0 1 1.466.28l2.295 1.78a1.745 1.745 0 0 1 .163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z"/></svg>${contact.phone2}</a>` : ''}
-                        </div>
-                    </div>
-                    <div class="flex-shrink-0 self-start sm:self-center">
-                         <button data-id="${contact.id}" class="delete-btn p-2 rounded-full text-gray-400 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-500 dark:hover:text-red-400 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m3.5.013l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m3.5-.013l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Z"/></svg>
-                            <span class="sr-only">Eliminar</span>
-                        </button>
-                    </div>`;
-                contactList.appendChild(contactElement);
-            });
-        }
-        
-        // --- INICIALIZACIÓN ---
-        authenticateUser();
-    </script>
 </body>
 </html>
