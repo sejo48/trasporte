@@ -231,12 +231,9 @@
     const estado = [];
 
     filas.forEach(fila => {
-      // Obtiene el nombre de la celda (primera celda, índice 0)
       const nombre = fila.cells[0].textContent;
       
-      // Obtiene el monto de la celda (segunda celda, índice 1)
       const montoCelda = fila.cells[1];
-      // Limpia el formato de moneda para obtener el número
       const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
       
       const check = fila.querySelector("input[type='checkbox']");
@@ -259,14 +256,19 @@
     let totalPendiente = 0;
 
     filas.forEach(fila => {
-      // Obtiene el monto de la celda (segunda celda, índice 1)
       const montoCelda = fila.cells[1];
-      // Limpia el formato de moneda para obtener el número
-      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
+      let monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
       
-      // Verifica si el monto es un número válido antes de sumar
+      // Valida si el monto es un número y tiene un máximo de 5 dígitos
       if (!isNaN(monto)) {
+        // Si el monto es mayor a 5 dígitos, lo ajusta a 99999
+        if (monto > 99999) {
+          monto = 99999;
+        }
+        
+        montoCelda.textContent = monto.toLocaleString('es-CR', { minimumFractionDigits: 2 });
         totalGeneral += monto;
+        
         const check = fila.querySelector("input[type='checkbox']");
 
         if (check.checked) {
@@ -274,6 +276,9 @@
         } else {
           totalPendiente += monto;
         }
+      } else {
+        // Si no es un número, se pone en 0 y se formatea
+        montoCelda.textContent = (0).toLocaleString('es-CR', { minimumFractionDigits: 2 });
       }
     });
 
@@ -281,7 +286,6 @@
     document.getElementById("totalGeneral").textContent = totalGeneral.toLocaleString('es-CR', { minimumFractionDigits: 2 });
     document.getElementById("totalPendiente").textContent = totalPendiente.toLocaleString('es-CR', { minimumFractionDigits: 2 });
 
-    // Llama a la función para guardar el estado después de recalcular
     guardarEstado();
   }
 
@@ -294,11 +298,8 @@
       
       filas.forEach((fila, index) => {
         if (estado[index]) {
-          // Carga el nombre y el monto
           fila.cells[0].textContent = estado[index].nombre;
           fila.cells[1].textContent = estado[index].monto.toLocaleString('es-CR', { minimumFractionDigits: 2 });
-
-          // Carga el estado del checkbox
           const check = fila.querySelector("input[type='checkbox']");
           check.checked = estado[index].checked;
         }
@@ -312,12 +313,10 @@
     recalcularYGuardar();
   });
 
-  // Event listener para cambios en los checkboxes
   document.querySelectorAll("#tabla input[type='checkbox']").forEach(cb => {
     cb.addEventListener("change", recalcularYGuardar);
   });
   
-  // Event listener para cambios en las celdas editables
   document.querySelectorAll("#tabla td[contenteditable='true']").forEach(cell => {
       cell.addEventListener("blur", recalcularYGuardar);
   });
