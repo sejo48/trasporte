@@ -234,7 +234,8 @@
       const nombre = fila.cells[0].textContent;
       
       const montoCelda = fila.cells[1];
-      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
+      // Limpia el formato de moneda para obtener el número de forma correcta
+      const monto = parseFloat(montoCelda.textContent.replace(/,/g, ''));
       
       const check = fila.querySelector("input[type='checkbox']");
 
@@ -257,11 +258,12 @@
 
     filas.forEach(fila => {
       const montoCelda = fila.cells[1];
-      let monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', '.'));
+      // Limpia el formato de moneda para obtener el número de forma correcta
+      let monto = parseFloat(montoCelda.textContent.replace(/,/g, ''));
       
       // Valida si el monto es un número y tiene un máximo de 5 dígitos
       if (!isNaN(monto)) {
-        // Si el monto es mayor a 5 dígitos, lo ajusta a 99999
+        // Si el monto es mayor a 99999, lo ajusta a 99999
         if (monto > 99999) {
           monto = 99999;
         }
