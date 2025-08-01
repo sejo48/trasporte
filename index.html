@@ -259,7 +259,7 @@
     filas.forEach(fila => {
       const montoCelda = fila.cells[1];
       // Limpia el formato de moneda para obtener el número de forma correcta
-      let monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(/\./g, '').replace(',', ''));
+      let monto = parseFloat(montoCelda.textContent.replace(/[^0-9]/g, ''));
       
       // Valida si el monto es un número y tiene un máximo de 5 dígitos
       if (!isNaN(monto)) {
