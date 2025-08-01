@@ -66,6 +66,11 @@
       background-color: #3a3a3a;
     }
 
+    /* Estilo para las celdas editables */
+    td[contenteditable="true"] {
+        cursor: text;
+    }
+
     tfoot td {
       background-color: #55aa44;
       font-weight: bold;
@@ -126,77 +131,77 @@
   </thead>
   <tbody id="tabla">
     <tr>
-        <td>Elvira</td>
-        <td data-monto="30000">30,000.00</td>
+        <td contenteditable="true">Elvira</td>
+        <td contenteditable="true" data-monto="30000">30,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Rocío</td>
-        <td data-monto="50000">50,000.00</td>
+        <td contenteditable="true">Rocío</td>
+        <td contenteditable="true" data-monto="50000">50,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Marielos</td>
-        <td data-monto="30000">30,000.00</td>
+        <td contenteditable="true">Marielos</td>
+        <td contenteditable="true" data-monto="30000">30,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Gudelia</td>
-        <td data-monto="35000">35,000.00</td>
+        <td contenteditable="true">Gudelia</td>
+        <td contenteditable="true" data-monto="35000">35,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Bertilia</td>
-        <td data-monto="30000">30,000.00</td>
+        <td contenteditable="true">Bertilia</td>
+        <td contenteditable="true" data-monto="30000">30,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Elizabeth</td>
-        <td data-monto="40000">40,000.00</td>
+        <td contenteditable="true">Elizabeth</td>
+        <td contenteditable="true" data-monto="40000">40,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Josefa</td>
-        <td data-monto="35000">35,000.00</td>
+        <td contenteditable="true">Josefa</td>
+        <td contenteditable="true" data-monto="35000">35,000.00</td>
         <td><input type="checkbox"></td>
     </tr>
     <tr>
-        <td>Carmen</td>
-        <td data-monto="35000">35,000.00</td>
+        <td contenteditable="true">Carmen</td>
+        <td contenteditable="true" data-monto="35000">35,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Margarita</td>
-        <td data-monto="40000">40,000.00</td>
+        <td contenteditable="true">Margarita</td>
+        <td contenteditable="true" data-monto="40000">40,000.00</td>
         <td><input type="checkbox" checked></td></tr>
     <tr>
-        <td>Nannys</td>
-        <td data-monto="10000">10,000.00</td>
+        <td contenteditable="true">Nannys</td>
+        <td contenteditable="true" data-monto="10000">10,000.00</td>
         <td><input type="checkbox"></td>
     </tr>
     <tr>
-        <td>Carmencita</td>
-        <td data-monto="30000">30,000.00</td>
+        <td contenteditable="true">Carmencita</td>
+        <td contenteditable="true" data-monto="30000">30,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Don Amibal</td>
-        <td data-monto="50000">50,000.00</td>
+        <td contenteditable="true">Don Amibal</td>
+        <td contenteditable="true" data-monto="50000">50,000.00</td>
         <td><input type="checkbox"></td>
     </tr>
     <tr>
-        <td>Norman</td>
-        <td data-monto="45000">45,000.00</td>
+        <td contenteditable="true">Norman</td>
+        <td contenteditable="true" data-monto="45000">45,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Fanny</td>
-        <td data-monto="45000">45,000.00</td>
+        <td contenteditable="true">Fanny</td>
+        <td contenteditable="true" data-monto="45000">45,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
     <tr>
-        <td>Doña Mari</td>
-        <td data-monto="45000">45,000.00</td>
+        <td contenteditable="true">Doña Mari</td>
+        <td contenteditable="true" data-monto="45000">45,000.00</td>
         <td><input type="checkbox" checked></td>
     </tr>
   </tbody>
@@ -220,59 +225,101 @@
 </table>
 
 <script>
-  // Función para actualizar los totales de los montos
-  function actualizarTotales() {
+  // Función para guardar el estado completo de la tabla en localStorage
+  function guardarEstado() {
+    const filas = document.querySelectorAll("#tabla tr");
+    const estado = [];
+
+    filas.forEach(fila => {
+      // Obtiene el nombre de la celda (primera celda, índice 0)
+      const nombre = fila.cells[0].textContent;
+      
+      // Obtiene el monto de la celda (segunda celda, índice 1)
+      const montoCelda = fila.cells[1];
+      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(',', '')); // Limpia el formato de moneda para obtener el número
+      
+      const check = fila.querySelector("input[type='checkbox']");
+
+      estado.push({
+        nombre: nombre,
+        monto: monto,
+        checked: check.checked
+      });
+    });
+
+    localStorage.setItem('tablaEstado', JSON.stringify(estado));
+  }
+
+  // Función para recalcular los totales y guardar el estado
+  function recalcularYGuardar() {
     const filas = document.querySelectorAll("#tabla tr");
     let totalSeleccionado = 0;
     let totalGeneral = 0;
     let totalPendiente = 0;
-    const estadosCheckbox = []; // Array para guardar el estado de cada checkbox
 
     filas.forEach(fila => {
-      const monto = parseFloat(fila.cells[1].dataset.monto);
-      totalGeneral += monto;
+      // Obtiene el monto de la celda (segunda celda, índice 1)
+      const montoCelda = fila.cells[1];
+      const monto = parseFloat(montoCelda.textContent.replace(/[^0-9,.]/g, '').replace(',', ''));
+      
+      // Verifica si el monto es un número válido antes de sumar
+      if (!isNaN(monto)) {
+        totalGeneral += monto;
+        const check = fila.querySelector("input[type='checkbox']");
 
-      const check = fila.querySelector("input[type='checkbox']");
-
-      if (check.checked) {
-        totalSeleccionado += monto;
-      } else {
-        totalPendiente += monto;
+        if (check.checked) {
+          totalSeleccionado += monto;
+        } else {
+          totalPendiente += monto;
+        }
       }
-
-      estadosCheckbox.push(check.checked); // Guarda el estado del checkbox
     });
 
     document.getElementById("totalSeleccionado").textContent = totalSeleccionado.toLocaleString('es-CR', { minimumFractionDigits: 2 });
     document.getElementById("totalGeneral").textContent = totalGeneral.toLocaleString('es-CR', { minimumFractionDigits: 2 });
     document.getElementById("totalPendiente").textContent = totalPendiente.toLocaleString('es-CR', { minimumFractionDigits: 2 });
 
-    // Guarda el estado de los checkboxes en el localStorage
-    localStorage.setItem('checkboxEstados', JSON.stringify(estadosCheckbox));
+    // Llama a la función para guardar el estado después de recalcular
+    guardarEstado();
   }
 
-  // Función para cargar el estado de los checkboxes del localStorage
-  function cargarEstados() {
-    const estadosGuardados = localStorage.getItem('checkboxEstados');
-    if (estadosGuardados) {
-      const estados = JSON.parse(estadosGuardados);
-      const checkboxes = document.querySelectorAll("#tabla input[type='checkbox']");
-      checkboxes.forEach((cb, index) => {
-        if (estados[index] !== undefined) {
-          cb.checked = estados[index];
+  // Función para cargar el estado de la tabla desde localStorage
+  function cargarEstado() {
+    const estadoGuardado = localStorage.getItem('tablaEstado');
+    if (estadoGuardado) {
+      const estado = JSON.parse(estadoGuardado);
+      const filas = document.querySelectorAll("#tabla tr");
+      
+      filas.forEach((fila, index) => {
+        if (estado[index]) {
+          // Carga el nombre y el monto
+          fila.cells[0].textContent = estado[index].nombre;
+          fila.cells[1].textContent = estado[index].monto.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+
+          // Carga el estado del checkbox
+          const check = fila.querySelector("input[type='checkbox']");
+          check.checked = estado[index].checked;
         }
       });
     }
   }
 
+  // Carga el estado al cargar la página y luego recalcula
   document.addEventListener('DOMContentLoaded', () => {
-    cargarEstados(); // Carga el estado al abrir la página
-    actualizarTotales(); // Llama a la función para inicializar los totales
+    cargarEstado();
+    recalcularYGuardar();
   });
 
+  // Event listener para cambios en los checkboxes
   document.querySelectorAll("#tabla input[type='checkbox']").forEach(cb => {
-    cb.addEventListener("change", actualizarTotales);
+    cb.addEventListener("change", recalcularYGuardar);
   });
+  
+  // Event listener para cambios en las celdas editables
+  document.querySelectorAll("#tabla td[contenteditable='true']").forEach(cell => {
+      cell.addEventListener("blur", recalcularYGuardar);
+  });
+
 </script>
 
 </body>
